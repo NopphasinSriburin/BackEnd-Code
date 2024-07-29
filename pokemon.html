@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Detail</title>
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+      crossorigin="anonymous"
+    >
+    <style>
+        .card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="pokemon-name"></h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sprites</h5>
+                        <div id="sprites"></div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Stats</h5>
+                        <ul id="stats" class="list-group list-group-flush"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Basic Info</h5>
+                        <p id="basic-info"></p>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Abilities</h5>
+                        <ul id="abilities" class="list-group list-group-flush"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const pokemonId = urlParams.get("id");
+
+        fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
+            .then((response) => response.json())
+            .then((pokemon) => {
+                document.getElementById("pokemon-name").textContent = `${pokemon.name} (#${pokemon.id})`;
+
+                // Display sprites
+                const spritesDiv = document.getElementById("sprites");
+                spritesDiv.innerHTML = `
+                    <img src="${pokemon.sprites.front_default}" class="img-fluid mb-2" alt="Front Sprite">
+                    <img src="${pokemon.sprites.back_default}" class="img-fluid mb-2" alt="Back Sprite">
+                `;
+                
+                // Display basic info
+                document.getElementById("basic-info").innerHTML = `
+                    <p><strong>Height:</strong> ${pokemon.height}</p>
+                    <p><strong>Weight:</strong> ${pokemon.weight}</p>
+                    <p><strong>Types:</strong> ${pokemon.types.map(type => `<a href="type.html?type=${type.type.name}" target="_blank">${type.type.name}</a>`).join(', ')}</p>
+                `;
+
+                // Display stats
+                const statsList = document.getElementById("stats");
+                pokemon.stats.forEach(stat => {
+                    statsList.innerHTML += `<li class="list-group-item"><a href="stat.html?stat=${stat.stat.name}&value=${stat.base_stat}" target="_blank">${stat.stat.name}: ${stat.base_stat}</a></li>`;
+                });
+
+                // Display abilities
+                const abilitiesList = document.getElementById("abilities");
+                pokemon.abilities.forEach(ability => {
+                    abilitiesList.innerHTML += `<li class="list-group-item"><a href="ability.html?ability=${ability.ability.name}" target="_blank">${ability.ability.name}</a></li>`;
+                });
+            })
+            .catch((error) => {
+                console.error('Error fetching Pokémon details:', error);
+            });
+    </script>
+</body>
+</html>
