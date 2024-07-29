@@ -66,24 +66,24 @@
                     <img src="${pokemon.sprites.front_default}" class="img-fluid mb-2" alt="Front Sprite">
                     <img src="${pokemon.sprites.back_default}" class="img-fluid mb-2" alt="Back Sprite">
                 `;
-
+                
                 // Display basic info
                 document.getElementById("basic-info").innerHTML = `
                     <p><strong>Height:</strong> ${pokemon.height}</p>
                     <p><strong>Weight:</strong> ${pokemon.weight}</p>
-                    <p><strong>Types:</strong> ${pokemon.types.map(type => type.type.name).join(', ')}</p>
+                    <p><strong>Types:</strong> ${pokemon.types.map(type => `<a href="type.html?type=${type.type.name}" target="_blank">${type.type.name}</a>`).join(', ')}</p>
                 `;
 
                 // Display stats
                 const statsList = document.getElementById("stats");
                 pokemon.stats.forEach(stat => {
-                    statsList.innerHTML += `<li class="list-group-item">${stat.stat.name}: ${stat.base_stat}</li>`;
+                    statsList.innerHTML += `<li class="list-group-item"><a href="stat.html?stat=${stat.stat.name}&value=${stat.base_stat}" target="_blank">${stat.stat.name}: ${stat.base_stat}</a></li>`;
                 });
 
                 // Display abilities
                 const abilitiesList = document.getElementById("abilities");
                 pokemon.abilities.forEach(ability => {
-                    abilitiesList.innerHTML += `<li class="list-group-item"><a href="/ability.html?ability=${ability.ability.name}" target="_blank">${ability.ability.name}</a></li>`;
+                    abilitiesList.innerHTML += `<li class="list-group-item"><a href="ability.html?ability=${ability.ability.name}" target="_blank">${ability.ability.name}</a></li>`;
                 });
             })
             .catch((error) => {
