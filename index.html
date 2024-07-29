@@ -20,33 +20,50 @@
     <div class="container">
         <h1>Pokedex Lab</h1>
         <div id="name" class="row"></div>
+        <div id="load-more-container" class="row">
+            <div class="col-12 text-center">
+                <button id="load-more" class="btn btn-primary mt-3">Load More</button>
+            </div>
+        </div>
     </div>
     <script>
-        fetch("https://pokeapi.co/api/v2/pokemon?limit=20")  // Adjust the limit as needed
-            .then((res) => res.json())
-            .then((data) => {
-                const datas = data["results"];
-                const ele = document.getElementById("name");
+        let offset = 0;
+        const limit = 20;  // Adjust the limit as needed
 
-                datas.forEach((element, index) => {
-                    fetch(element.url)
-                        .then((res) => res.json())
-                        .then((details) => {
-                            ele.innerHTML += `
-                                <div class='col-3'>
-                                    <div class='card'>
-                                        <img class='card-img-top' src='${details.sprites.front_default}' alt='${element.name}'>
-                                        <div class='card-body'>
-                                            <h5 class='card-title'>#${details.id} ${element.name}</h5>
-                                            <a href="pokemon.html?id=${details.id}" class="btn btn-primary">Details</a>
+        function loadPokemon() {
+            fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const datas = data["results"];
+                    const ele = document.getElementById("name");
+
+                    datas.forEach((element) => {
+                        fetch(element.url)
+                            .then((res) => res.json())
+                            .then((details) => {
+                                ele.innerHTML += `
+                                    <div class='col-3'>
+                                        <div class='card'>
+                                            <img class='card-img-top' src='${details.sprites.front_default}' alt='${element.name}'>
+                                            <div class='card-body'>
+                                                <h5 class='card-title'>#${details.id} ${element.name}</h5>
+                                                <a href="pokemon.html?id=${details.id}" class="btn btn-primary">Details</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>`;
-                        })
-                        .catch((err) => console.error(err));
-                });
-            })
-            .catch((err) => console.error(err));
+                                    </div>`;
+                            })
+                            .catch((err) => console.error(err));
+                    });
+
+                    offset += limit;
+                })
+                .catch((err) => console.error(err));
+        }
+
+        document.getElementById('load-more').addEventListener('click', loadPokemon);
+
+        // Initial load
+        loadPokemon();
     </script>
     <script 
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
